@@ -43,6 +43,11 @@
         <th></th>
         <th>Id</th>
         <th>Name</th>
+        <th>Properties</th>
+        <th>Relationships</th>
+        <th>Events</th>
+        <th>Behaviors</th>
+        <th>Permissions</th>
       </tr>
     </thead>
     <tbody id="thing-list"></tbody>
@@ -77,9 +82,27 @@
         idCell.textContent = thing.id;
 
         const nameCell = document.createElement('td');
-        nameCell.textContent = thing.name;
+        nameCell.textContent = thing.properties.name;
 
-        tr.append(deleteCell, idCell, nameCell);
+        const propertiesCell = document.createElement('td');
+        propertiesCell.textContent = Object.keys(thing.properties).length;
+
+        const relationshipsCell = document.createElement('td');
+        relationshipsCell.textContent = thing.relationships.length;
+
+        const eventsCell = document.createElement('td');
+        eventsCell.textContent = thing.events.length;
+
+        const behaviorsCell = document.createElement('td');
+        behaviorsCell.textContent = thing.behaviors.length;
+
+        const permissionsCell = document.createElement('td');
+        permissionsCell.textContent = Object.keys(thing.permissions).length;
+
+        tr.append(
+          deleteCell, idCell, nameCell,
+          propertiesCell, relationshipsCell, eventsCell, behaviorsCell, permissionsCell,
+        );
         listEl.appendChild(tr);
       }
     }
