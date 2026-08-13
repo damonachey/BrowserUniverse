@@ -68,6 +68,15 @@ export async function getAllThings() {
   return things.sort((a, b) => a.id - b.id);
 }
 
+export async function updateThing(thing) {
+  thing.properties.modified = new Date();
+  const db = await openDB();
+  const tx = db.transaction(STORE_THINGS, 'readwrite');
+  tx.objectStore(STORE_THINGS).put(thing);
+  await txToPromise(tx);
+  return thing;
+}
+
 export async function deleteThing(id) {
   const db = await openDB();
   const tx = db.transaction(STORE_THINGS, 'readwrite');
