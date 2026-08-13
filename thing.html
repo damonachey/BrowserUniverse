@@ -62,7 +62,6 @@
     import { getThing, updateThing } from './src/db.js';
 
     const contentEl = document.getElementById('content');
-    const READ_ONLY_PROPERTIES = ['created', 'modified'];
 
     function renderProperties(properties, onSave) {
       const form = document.createElement('form');
@@ -76,17 +75,11 @@
         label.textContent = key;
         row.appendChild(label);
 
-        if (READ_ONLY_PROPERTIES.includes(key)) {
-          const span = document.createElement('span');
-          span.textContent = new Date(properties[key]).toLocaleString();
-          row.appendChild(span);
-        } else {
-          const input = document.createElement('input');
-          input.size = 80;
-          input.value = properties[key];
-          inputs[key] = input;
-          row.appendChild(input);
-        }
+        const input = document.createElement('input');
+        input.size = 80;
+        input.value = properties[key];
+        inputs[key] = input;
+        row.appendChild(input);
 
         form.appendChild(row);
       }
@@ -133,6 +126,23 @@
       return ul;
     }
 
+    function describeEvent(event) {
+      if (event.action === 'created') return 'Created';
+      if (event.action === 'property changed') return `Property '${event.property}' changed to '${event.value}'`;
+      return event.action;
+    }
+
+    function renderEvents(events) {
+      if (events.length === 0) return '<p>None</p>';
+      const ul = document.createElement('ul');
+      for (const event of [...events].reverse()) {
+        const li = document.createElement('li');
+        li.textContent = `${new Date(event.timestamp).toLocaleString()} — ${describeEvent(event)}`;
+        ul.appendChild(li);
+      }
+      return ul;
+    }
+
     function renderSection(title, node) {
       const section = document.createElement('section');
       const h2 = document.createElement('h2');
@@ -167,7 +177,7 @@
         render();
       })));
       contentEl.appendChild(renderSection('Relationships', renderList(thing.relationships)));
-      contentEl.appendChild(renderSection('Events', renderList(thing.events)));
+      contentEl.appendChild(renderSection('Events', renderEvents(thing.events)));
       contentEl.appendChild(renderSection('Behaviors', renderList(thing.behaviors)));
       contentEl.appendChild(renderSection('Permissions', renderKeyValue(thing.permissions)));
     }

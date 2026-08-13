@@ -61,10 +61,19 @@ export async function getAllThings() {
 }
 
 export async function updateThing(thing) {
-  thing.properties.modified = new Date();
   const db = await openDB();
   const tx = db.transaction(STORE_THINGS, 'readwrite');
-  tx.objectStore(STORE_THINGS).put(thing);
+  const store = tx.objectStore(STORE_THINGS);
+  const existing = await requestToPromise(store.get(thing.id));
+
+  const timestamp = new Date();
+  for (const property of Object.keys(thing.properties)) {
+    if (!existing || existing.properties[property] !== thing.properties[property]) {
+      thing.events.push({ timestamp, action: 'property changed', property, value: thing.properties[property] });
+    }
+  }
+
+  store.put(thing);
   await txToPromise(tx);
   return thing;
 }

@@ -20,9 +20,12 @@ Every object in the universe is a `Thing`:
 ```js
 {
   id: '0189c1e2-3f8a-7e1b-9c2d-1a2b3c4d5e6f',
-  properties: { name: 'Nebula-482', created: Date, modified: Date },
+  properties: { name: 'Nebula-482' },
   relationships: [],
-  events: [],
+  events: [
+    { timestamp: Date, action: 'created' },
+    { timestamp: Date, action: 'property changed', property: 'name', value: 'Nebula-482' },
+  ],
   behaviors: [],
   permissions: {},
 }
@@ -34,12 +37,18 @@ Every object in the universe is a `Thing`:
   of needing a separate counter or `created` sort. Ids are not shown in the
   `index.html` table (Name links to the detail page instead) but are displayed,
   read-only, on `thing.html`.
-- `properties` — a free-form key/value bag. `name` lives here rather than as a
-  top-level field so it's editable and extensible the same way as any other
-  property. `created` and `modified` are timestamps managed by `db.js`, not the UI —
-  `created` is set once at creation, `modified` is stamped on every `updateThing()` call.
-- `relationships`, `events`, `behaviors` — lists, shape not yet defined; currently
-  always empty.
+- `properties` — a free-form key/value bag holding a Thing's current state.
+  `name` lives here rather than as a top-level field so it's editable and
+  extensible the same way as any other property.
+- `events` — an append-only log of things that happened to this Thing, each with
+  a `timestamp` and an `action`. Every Thing gets a `created` event followed by a
+  `property set` event for each initial property (currently just `name`).
+  `updateThing()` diffs the incoming `properties` against what's stored and
+  appends a `property set` event per changed field — this is also how "last
+  modified" is derived, rather than a separate `modified` field: it's just the
+  timestamp of the most recent event.
+- `relationships`, `behaviors` — lists, shape not yet defined; currently always
+  empty.
 - `permissions` — a key/value bag, shape not yet defined; currently always empty.
 
 ## IndexedDB schema
