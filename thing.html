@@ -36,6 +36,18 @@
       margin: 0;
       padding-left: 1.2em;
     }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 16px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .prop-row label {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -43,9 +55,54 @@
   <div id="content"></div>
 
   <script type="module">
-    import { getThing } from './src/db.js';
+    import { getThing, updateThing } from './src/db.js';
 
     const contentEl = document.getElementById('content');
+    const READ_ONLY_PROPERTIES = ['created', 'modified'];
+
+    function renderProperties(properties, onSave) {
+      const form = document.createElement('form');
+      const inputs = {};
+
+      for (const key of Object.keys(properties)) {
+        const row = document.createElement('div');
+        row.className = 'prop-row';
+
+        const label = document.createElement('label');
+        label.textContent = key;
+        row.appendChild(label);
+
+        if (READ_ONLY_PROPERTIES.includes(key)) {
+          const span = document.createElement('span');
+          span.textContent = new Date(properties[key]).toLocaleString();
+          row.appendChild(span);
+        } else {
+          const input = document.createElement('input');
+          input.size = 80;
+          input.value = properties[key];
+          inputs[key] = input;
+          row.appendChild(input);
+        }
+
+        form.appendChild(row);
+      }
+
+      const saveBtn = document.createElement('button');
+      saveBtn.type = 'submit';
+      saveBtn.textContent = 'Save';
+      form.appendChild(saveBtn);
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const updated = { ...properties };
+        for (const key of Object.keys(inputs)) {
+          updated[key] = inputs[key].value;
+        }
+        onSave(updated);
+      });
+
+      return form;
+    }
 
     function renderKeyValue(obj) {
       const keys = Object.keys(obj);
@@ -94,7 +151,11 @@
       h1.textContent = `${thing.properties.name} (#${thing.id})`;
       contentEl.appendChild(h1);
 
-      contentEl.appendChild(renderSection('Properties', renderKeyValue(thing.properties)));
+      contentEl.appendChild(renderSection('Properties', renderProperties(thing.properties, async (updated) => {
+        thing.properties = updated;
+        await updateThing(thing);
+        render();
+      })));
       contentEl.appendChild(renderSection('Relationships', renderList(thing.relationships)));
       contentEl.appendChild(renderSection('Events', renderList(thing.events)));
       contentEl.appendChild(renderSection('Behaviors', renderList(thing.behaviors)));
