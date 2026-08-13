@@ -150,6 +150,8 @@
         return;
       }
 
+      document.title = `${thing.properties.name} - Browser Universe`;
+
       contentEl.innerHTML = '';
       const h1 = document.createElement('h1');
       h1.textContent = `${thing.properties.name} (#${thing.id})`;
