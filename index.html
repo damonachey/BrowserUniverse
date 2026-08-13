@@ -41,7 +41,6 @@
     <thead>
       <tr>
         <th></th>
-        <th>Id</th>
         <th>Name</th>
         <th>Properties</th>
         <th>Relationships</th>
@@ -78,15 +77,12 @@
         });
         deleteCell.appendChild(deleteBtn);
 
-        const idCell = document.createElement('td');
-        const idLink = document.createElement('a');
-        idLink.href = `thing.html?id=${thing.id}`;
-        idLink.textContent = thing.id;
-        idLink.style.color = 'inherit';
-        idCell.appendChild(idLink);
-
         const nameCell = document.createElement('td');
-        nameCell.textContent = thing.properties.name;
+        const nameLink = document.createElement('a');
+        nameLink.href = `thing.html?id=${thing.id}`;
+        nameLink.textContent = thing.properties.name;
+        nameLink.style.color = 'inherit';
+        nameCell.appendChild(nameLink);
 
         const propertiesCell = document.createElement('td');
         propertiesCell.textContent = Object.keys(thing.properties).length;
@@ -104,7 +100,7 @@
         permissionsCell.textContent = Object.keys(thing.permissions).length;
 
         tr.append(
-          deleteCell, idCell, nameCell,
+          deleteCell, nameCell,
           propertiesCell, relationshipsCell, eventsCell, behaviorsCell, permissionsCell,
         );
         listEl.appendChild(tr);
@@ -117,7 +113,7 @@
     });
 
     resetBtn.addEventListener('click', async () => {
-      if (confirm('Remove all things and reset the next id to 1?')) {
+      if (confirm('Remove all things?')) {
         await resetAll();
         refreshList();
       }

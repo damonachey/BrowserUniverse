@@ -143,7 +143,7 @@
     }
 
     async function render() {
-      const id = Number(new URLSearchParams(location.search).get('id'));
+      const id = new URLSearchParams(location.search).get('id');
       const thing = id ? await getThing(id) : null;
       if (!thing) {
         contentEl.innerHTML = `<h1>Thing not found</h1>`;
@@ -154,8 +154,12 @@
 
       contentEl.innerHTML = '';
       const h1 = document.createElement('h1');
-      h1.textContent = `${thing.properties.name} (#${thing.id})`;
+      h1.textContent = thing.properties.name;
       contentEl.appendChild(h1);
+
+      const idRow = document.createElement('p');
+      idRow.innerHTML = `<strong>Id:</strong> ${thing.id}`;
+      contentEl.appendChild(idRow);
 
       contentEl.appendChild(renderSection('Properties', renderProperties(thing.properties, async (updated) => {
         thing.properties = updated;
