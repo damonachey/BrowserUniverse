@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Statistics - Browser Universe</title>
+  <style>
+    body {
+      background-color: #3b4a5a;
+      color: #eef1f4;
+      font-family: system-ui, sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 16px;
+    }
+
+    dt {
+      font-weight: bold;
+    }
+
+    dd {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <p><a href="index.html">&larr; Back to all things</a></p>
+  <h1>Statistics</h1>
+  <dl id="stats"></dl>
+
+  <script type="module">
+    import { getAllThings } from './src/db.js';
+
+    const statsEl = document.getElementById('stats');
+
+    function formatBytes(bytes) {
+      if (bytes === undefined) return 'Unknown';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let value = bytes;
+      let unitIndex = 0;
+      while (value >= 1024 && unitIndex < units.length - 1) {
+        value /= 1024;
+        unitIndex++;
+      }
+      return `${value.toFixed(1)} ${units[unitIndex]}`;
+    }
+
+    function addStat(label, value) {
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      statsEl.append(dt, dd);
+    }
+
+    async function render() {
+      const things = await getAllThings();
+      addStat('Things', things.length);
+
+      if (navigator.storage?.estimate) {
+        const { usage, quota } = await navigator.storage.estimate();
+        addStat('Storage used', formatBytes(usage));
+        addStat('Storage quota', formatBytes(quota));
+      } else {
+        addStat('Storage used', 'Not supported in this browser');
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ IndexedDB. It's hosted as a GitHub Pages project site at https://achey.net/Brows
 
 - `index.html` — lists all Things in a table; create/reset controls.
 - `thing.html` — detail/edit view for a single Thing, selected via `?id=`.
+- `stats.html` — Thing count and browser storage usage (`navigator.storage.estimate()`).
 - `src/Thing.js` — the `Thing` data model.
 - `src/db.js` — all IndexedDB access.
 - `src/randomName.js` — generates a random name for newly created Things.

@@ -36,7 +36,6 @@
   <h1>Browser Universe</h1>
 
   <button id="create-thing">Create Thing</button>
-  <button id="reset-things">Reset</button>
   <table>
     <thead>
       <tr>
@@ -51,6 +50,9 @@
     </thead>
     <tbody id="thing-list"></tbody>
   </table>
+
+  <button id="reset-things">Reset</button>
+  <p><a href="stats.html">Statistics</a></p>
 
   <script type="module">
     import { createThing, getAllThings, deleteThing, resetAll } from './src/db.js';
