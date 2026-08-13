@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BrowserUniverse</title>
+  <style>
+    body {
+      background-color: #3b4a5a;
+      color: #eef1f4;
+      font-family: system-ui, sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 16px;
+    }
+
+    dt {
+      font-weight: bold;
+    }
+
+    dd {
+      margin: 0;
+    }
+
+    section {
+      margin-top: 1.5em;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <p><a href="index.html">&larr; Back to all things</a></p>
+  <div id="content"></div>
+
+  <script type="module">
+    import { getThing } from './src/db.js';
+
+    const contentEl = document.getElementById('content');
+
+    function renderKeyValue(obj) {
+      const keys = Object.keys(obj);
+      if (keys.length === 0) return '<p>None</p>';
+      const dl = document.createElement('dl');
+      for (const key of keys) {
+        const dt = document.createElement('dt');
+        dt.textContent = key;
+        const dd = document.createElement('dd');
+        dd.textContent = String(obj[key]);
+        dl.append(dt, dd);
+      }
+      return dl;
+    }
+
+    function renderList(items) {
+      if (items.length === 0) return '<p>None</p>';
+      const ul = document.createElement('ul');
+      for (const item of items) {
+        const li = document.createElement('li');
+        li.textContent = String(item);
+        ul.appendChild(li);
+      }
+      return ul;
+    }
+
+    function renderSection(title, node) {
+      const section = document.createElement('section');
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      section.appendChild(h2);
+      section.append(node instanceof Node ? node : document.createRange().createContextualFragment(node));
+      return section;
+    }
+
+    async function render() {
+      const id = Number(new URLSearchParams(location.search).get('id'));
+      const thing = id ? await getThing(id) : null;
+      if (!thing) {
+        contentEl.innerHTML = `<h1>Thing not found</h1>`;
+        return;
+      }
+
+      contentEl.innerHTML = '';
+      const h1 = document.createElement('h1');
+      h1.textContent = `${thing.properties.name} (#${thing.id})`;
+      contentEl.appendChild(h1);
+
+      contentEl.appendChild(renderSection('Properties', renderKeyValue(thing.properties)));
+      contentEl.appendChild(renderSection('Relationships', renderList(thing.relationships)));
+      contentEl.appendChild(renderSection('Events', renderList(thing.events)));
+      contentEl.appendChild(renderSection('Behaviors', renderList(thing.behaviors)));
+      contentEl.appendChild(renderSection('Permissions', renderKeyValue(thing.permissions)));
+    }
+
+    render();
+  </script>
+</body>
+</html>

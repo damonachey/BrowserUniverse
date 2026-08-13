@@ -79,7 +79,11 @@
         deleteCell.appendChild(deleteBtn);
 
         const idCell = document.createElement('td');
-        idCell.textContent = thing.id;
+        const idLink = document.createElement('a');
+        idLink.href = `thing.html?id=${thing.id}`;
+        idLink.textContent = thing.id;
+        idLink.style.color = 'inherit';
+        idCell.appendChild(idLink);
 
         const nameCell = document.createElement('td');
         nameCell.textContent = thing.properties.name;

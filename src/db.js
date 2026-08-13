@@ -55,6 +55,12 @@ export async function createThing(name) {
   return thing;
 }
 
+export async function getThing(id) {
+  const db = await openDB();
+  const tx = db.transaction(STORE_THINGS, 'readonly');
+  return requestToPromise(tx.objectStore(STORE_THINGS).get(id));
+}
+
 export async function getAllThings() {
   const db = await openDB();
   const tx = db.transaction(STORE_THINGS, 'readonly');
