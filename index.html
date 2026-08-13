@@ -36,6 +36,7 @@
   <h1>BrowserUniverse</h1>
 
   <button id="create-thing">Create Thing</button>
+  <button id="reset-things">Reset</button>
   <table>
     <thead>
       <tr>
@@ -48,11 +49,12 @@
   </table>
 
   <script type="module">
-    import { createThing, getAllThings, deleteThing } from './src/db.js';
+    import { createThing, getAllThings, deleteThing, resetAll } from './src/db.js';
     import { randomName } from './src/randomName.js';
 
     const listEl = document.getElementById('thing-list');
     const createBtn = document.getElementById('create-thing');
+    const resetBtn = document.getElementById('reset-things');
 
     async function refreshList() {
       const things = await getAllThings();
@@ -85,6 +87,13 @@
     createBtn.addEventListener('click', async () => {
       await createThing(randomName());
       refreshList();
+    });
+
+    resetBtn.addEventListener('click', async () => {
+      if (confirm('Remove all things and reset the next id to 1?')) {
+        await resetAll();
+        refreshList();
+      }
     });
 
     refreshList();

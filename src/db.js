@@ -68,3 +68,11 @@ export async function deleteThing(id) {
   tx.objectStore(STORE_THINGS).delete(id);
   await txToPromise(tx);
 }
+
+export async function resetAll() {
+  const db = await openDB();
+  const tx = db.transaction([STORE_GLOBALS, STORE_THINGS], 'readwrite');
+  tx.objectStore(STORE_THINGS).clear();
+  tx.objectStore(STORE_GLOBALS).put(1, NEXT_THING_ID_KEY);
+  await txToPromise(tx);
+}
