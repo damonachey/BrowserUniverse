@@ -47,8 +47,15 @@ Every object in the universe is a `Thing`:
   appends a `property set` event per changed field — this is also how "last
   modified" is derived, rather than a separate `modified` field: it's just the
   timestamp of the most recent event.
-- `relationships`, `behaviors` — lists, shape not yet defined; currently always
-  empty.
+- `relationships` — a list of links to other Things, each
+  `{ relationshipId, relationship, to }`: `relationshipId` is a UUIDv7 assigned
+  when the link is created, `relationship` names the link (e.g. `'Orbits'`),
+  and `to` is the id of the target Thing. Added via `addRelationship(thing,
+  relationship, to)` (`src/Thing.js`) — a standalone function rather than a
+  class method, since Things loaded from IndexedDB are plain objects and don't
+  carry the `Thing` prototype. `thing.html` offers `'Orbits'` as the only
+  relationship type so far, chosen from a list of all other Things.
+- `behaviors` — a list, shape not yet defined; currently always empty.
 
 ## IndexedDB schema
 

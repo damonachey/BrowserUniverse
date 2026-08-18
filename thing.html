@@ -45,7 +45,10 @@
   <div id="content"></div>
 
   <script type="module">
-    import { getThing, updateThing } from './src/db.js';
+    import { getThing, getAllThings, updateThing } from './src/db.js';
+    import { addRelationship } from './src/Thing.js';
+
+    const RELATIONSHIP_TYPES = ['Orbits'];
 
     const contentEl = document.getElementById('content');
 
@@ -82,6 +85,65 @@
           updated[key] = inputs[key].value;
         }
         onSave(updated);
+      });
+
+      return form;
+    }
+
+    async function renderRelationships(relationships) {
+      if (relationships.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = 'None';
+        return p;
+      }
+      const ul = document.createElement('ul');
+      for (const rel of relationships) {
+        const target = await getThing(rel.to);
+        const li = document.createElement('li');
+        li.textContent = `${rel.relationship} → `;
+        const link = document.createElement('a');
+        link.href = `thing.html?id=${rel.to}`;
+        link.textContent = target ? target.properties.name : rel.to;
+        li.appendChild(link);
+        ul.appendChild(li);
+      }
+      return ul;
+    }
+
+    function renderAddRelationshipForm(otherThings, onAdd) {
+      if (otherThings.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = 'No other Things to relate to.';
+        return p;
+      }
+
+      const form = document.createElement('form');
+
+      const relationshipSelect = document.createElement('select');
+      for (const type of RELATIONSHIP_TYPES) {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        relationshipSelect.appendChild(option);
+      }
+
+      const toSelect = document.createElement('select');
+      for (const other of otherThings) {
+        const option = document.createElement('option');
+        option.value = other.id;
+        option.textContent = other.properties.name;
+        toSelect.appendChild(option);
+      }
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'submit';
+      addBtn.textContent = 'Add';
+
+      form.append(relationshipSelect, toSelect, addBtn);
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        onAdd(relationshipSelect.value, toSelect.value);
       });
 
       return form;
@@ -148,7 +210,17 @@
         await updateThing(thing);
         render();
       })));
-      contentEl.appendChild(renderSection('Relationships', renderList(thing.relationships)));
+      const allThings = await getAllThings();
+      const otherThings = allThings.filter((other) => other.id !== thing.id);
+
+      const relationshipsEl = document.createElement('div');
+      relationshipsEl.appendChild(await renderRelationships(thing.relationships));
+      relationshipsEl.appendChild(renderAddRelationshipForm(otherThings, async (relationship, to) => {
+        addRelationship(thing, relationship, to);
+        await updateThing(thing);
+        render();
+      }));
+      contentEl.appendChild(renderSection('Relationships', relationshipsEl));
       contentEl.appendChild(renderSection('Events', renderEvents(thing.events)));
       contentEl.appendChild(renderSection('Behaviors', renderList(thing.behaviors)));
     }
