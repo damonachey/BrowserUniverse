@@ -45,7 +45,6 @@
         <th>Relationships</th>
         <th>Events</th>
         <th>Behaviors</th>
-        <th>Permissions</th>
       </tr>
     </thead>
     <tbody id="thing-list"></tbody>
@@ -98,12 +97,9 @@
         const behaviorsCell = document.createElement('td');
         behaviorsCell.textContent = thing.behaviors.length;
 
-        const permissionsCell = document.createElement('td');
-        permissionsCell.textContent = Object.keys(thing.permissions).length;
-
         tr.append(
           deleteCell, nameCell,
-          propertiesCell, relationshipsCell, eventsCell, behaviorsCell, permissionsCell,
+          propertiesCell, relationshipsCell, eventsCell, behaviorsCell,
         );
         listEl.appendChild(tr);
       }

@@ -28,7 +28,6 @@ Every object in the universe is a `Thing`:
     { timestamp: Date, action: 'property changed', property: 'name', value: 'Nebula-482' },
   ],
   behaviors: [],
-  permissions: {},
 }
 ```
 
@@ -50,7 +49,6 @@ Every object in the universe is a `Thing`:
   timestamp of the most recent event.
 - `relationships`, `behaviors` — lists, shape not yet defined; currently always
   empty.
-- `permissions` — a key/value bag, shape not yet defined; currently always empty.
 
 ## IndexedDB schema
 

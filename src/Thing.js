@@ -8,6 +8,5 @@ export class Thing {
       { timestamp: new Date(), action: 'property changed', property: 'name', value: name },
     ];
     this.behaviors = [];
-    this.permissions = {};
   }
 }

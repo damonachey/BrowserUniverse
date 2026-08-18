@@ -14,20 +14,6 @@
       color: inherit;
     }
 
-    dl {
-      display: grid;
-      grid-template-columns: max-content 1fr;
-      gap: 4px 16px;
-    }
-
-    dt {
-      font-weight: bold;
-    }
-
-    dd {
-      margin: 0;
-    }
-
     section {
       margin-top: 1.5em;
     }
@@ -101,20 +87,6 @@
       return form;
     }
 
-    function renderKeyValue(obj) {
-      const keys = Object.keys(obj);
-      if (keys.length === 0) return '<p>None</p>';
-      const dl = document.createElement('dl');
-      for (const key of keys) {
-        const dt = document.createElement('dt');
-        dt.textContent = key;
-        const dd = document.createElement('dd');
-        dd.textContent = String(obj[key]);
-        dl.append(dt, dd);
-      }
-      return dl;
-    }
-
     function renderList(items) {
       if (items.length === 0) return '<p>None</p>';
       const ul = document.createElement('ul');
@@ -179,7 +151,6 @@
       contentEl.appendChild(renderSection('Relationships', renderList(thing.relationships)));
       contentEl.appendChild(renderSection('Events', renderEvents(thing.events)));
       contentEl.appendChild(renderSection('Behaviors', renderList(thing.behaviors)));
-      contentEl.appendChild(renderSection('Permissions', renderKeyValue(thing.permissions)));
     }
 
     render();
